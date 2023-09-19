@@ -1,107 +1,110 @@
 import http, { IncomingMessage, ServerResponse } from "http"
 
-const port: number = 2500
+const port: number = 5500
 
 interface iData{
-    id: number;
-    gender: string;
-    sheCodes: boolean;
-    broCodes: boolean;
+    id: number,
+    gender: string,
+    Complexion: string,
+    height: string,
+    marital_status: string,
 }
 
-interface iMessage{
-    message: string
-    success: boolean
-    data: null|{}[]
+interface iMessage {
+    message: string,
+    success: boolean,
+    data: null|{}[],
 }
 
-const Info: {}[] = [
+const Information: {}[] = [
     {
         id: 1,
-        name: "David",
-        gender: "Male",
-        sheCodes: false,
-        broCodes: true,
+        gender: "Female",
+        complexion: "Fair",
+        height: "Average",
+        marital_status: "Single"
     },
     {
         id: 2,
-        name: "Joan",
-        gender: "Female",
-        sheCodes: true,
-        broCodes: false,
+        gender: "Male",
+        complexion: "Fair",
+        height: "Tall",
+        marital_status: "Married"
     },
     {
         id: 3,
-        name: "Chinedu",
-        gender: "Male",
-        sheCodes: false,
-        broCodes: true,
+        gender: "Female",
+        complexion: "Dark",
+        height: "Short",
+        marital_status: "Single"
     },
     {
         id: 4,
-        name: "Regina",
-        gender: "Female",
-        sheCodes: true,
-        broCodes: false,
+        gender: "Male",
+        complexion: "Dark",
+        height: "Average",
+        marital_status: "Single"
     },
     {
         id: 5,
-        name: "Chiboy",
-        gender: "Male",
-        sheCodes: false,
-        broCodes: true,
-    }
+        gender: "Female",
+        complexion: "Fair",
+        height: "Tall",
+        marital_status: "Married"
+    },
 ]
 
 const server = http.createServer ((req:IncomingMessage, res:ServerResponse<IncomingMessage>) => {
-    res.setHeader ("Content-Type", "Application/JSON")
+    res.setHeader("Content-Type", "Application/JSON")
 
     const {url, method} = req
 
-    let status: number = 404
+    let status = 404;
 
-    let feedback: iMessage = {
+    let getBack: iMessage = {
         message: "failed",
         success: false,
         data: null
     }
 
-    const Mother: any = [];
+    const Father: any = [];
 
-    req.on("data",(pieces: any) =>{
-        Mother.push(pieces)
+    req.on("data", (chunk: any) => {
+        Father.push(chunk)
     }).on("end", () => {
 
         //GET METHOD
+
         if(url === "/" && method === "GET"){
             status = 200;
-            feedback.message = "All Infos Gotten",
-            feedback.success = true,
-            feedback.data = Info
 
-            res.write(JSON.stringify ({status, feedback}))
+            getBack.message = "All Information Gotten";
+            getBack.success = true;
+            getBack.data = Information;
+
+            res.write(JSON.stringify ({status, getBack}))
 
             res.end()
         }
 
         //POST METHOD
+
         if(url === "/" && method === "POST"){
-            status = 201;
-            const body = JSON.parse (Mother);
+            status = 201
+            const body = JSON.parse(Father)
+            Information.push(body);
+            getBack.message = "Successfully Added";
+            getBack.success = true;
+            getBack.data = Information
 
-            Info.push(body);
-            feedback.message = "SUCCESSFULLY ADDED",
-            feedback.success = true,
-            feedback.data = Info
+            res.write(JSON.stringify ({status, getBack}))
 
-            res.write(JSON.stringify ({status, feedback}))
-
-            res.end
+            res.end()
         }
     })
 })
+
 server.listen(port, () => {
     console.log("Server is up and running");
     
 })
-
