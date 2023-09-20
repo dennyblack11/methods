@@ -1,100 +1,111 @@
-import http,{ IncomingMessage, ServerResponse } from "http"
+import http, { IncomingMessage, ServerResponse } from "http"
+
+const port: number = 5500
 
 interface iData{
-    id: number
-    name: string
-    phoneNum: number
-    stack: string
+    id: number,
+    gender: string,
+    Complexion: string,
+    height: string,
+    marital_status: string,
 }
 
-
-interface iMessage{
-    message: string
-    success: boolean
-    data: null|{}|{}[]
+interface iMessage {
+    message: string,
+    success: boolean,
+    data: null|{}[],
 }
 
-const set08: {}[] = [
+const Information: {}[] = [
     {
         id: 1,
-        name: "Dennis",
-        phoneNum: 8086247067,
-        stack: "full-stack"
+        gender: "Female",
+        complexion: "Fair",
+        height: "Average",
+        marital_status: "Single"
     },
     {
         id: 2,
-        name: "Jemima",
-        phoneNum: 7036921433,
-        stack: "middle-stack"
+        gender: "Male",
+        complexion: "Fair",
+        height: "Tall",
+        marital_status: "Married"
     },
     {
         id: 3,
-        name: "Ayo",
-        phoneNum: 8086247067,
-        stack: "full-stack"
+        gender: "Female",
+        complexion: "Dark",
+        height: "Short",
+        marital_status: "Single"
     },
     {
         id: 4,
-        name: "Tobi",
-        phoneNum: 8086247067,
-        stack: "front-end"
+        gender: "Male",
+        complexion: "Dark",
+        height: "Average",
+        marital_status: "Single"
     },
     {
         id: 5,
-        name: "Ayo",
-        phoneNum: 8086247067,
-        stack: "back-end"
-    }
+        gender: "Female",
+        complexion: "Fair",
+        height: "Tall",
+        marital_status: "Married"
+    },
 ]
 
-const port: number = 5000
-
-const server = http.createServer((req:IncomingMessage, res:ServerResponse<IncomingMessage>) => {
+const server = http.createServer ((req:IncomingMessage, res:ServerResponse<IncomingMessage>) => {
     res.setHeader("Content-Type", "Application/JSON")
 
-    const {method, url} = req
-    let status: number = 404
+    const {url, method} = req
 
-    let respond: iMessage = {
+    let status = 404;
+
+    let getBack: iMessage = {
         message: "failed",
         success: false,
         data: null
-    };
-    const container: any = [];
-    req.on("data", (chunk: any ) => {
-        container.push(chunk)
+    }
+
+    const Father: any = [];
+
+    req.on("data", (chunk: any) => {
+        Father.push(chunk)
     }).on("end", () => {
-        //Get Method
+
+        //GET METHOD
+
         if(url === "/" && method === "GET"){
             status = 200;
-            respond.message = "All set08 data gotten";
-            respond.success = true;
-            respond.data = set08;
-            res.write(JSON.stringify({status, respond}));
 
-            res.end();
+            getBack.message = "All Information Gotten";
+            getBack.success = true;
+            getBack.data = Information;
+
+            res.write(JSON.stringify ({status, getBack}))
+
+            res.end()
         }
 
-        //Post Method
+        //POST METHOD
+
         if(url === "/" && method === "POST"){
-            status = 201;
-            const body = JSON.parse(container);
-        set08.push(body);
-        respond.message = "SUCCESSFULLY ADDED";
-        respond.success = true;
-        respond.data = set08;
-        res.write(JSON.stringify({
-        status, respond}))
+            status = 201
+            const body = JSON.parse(Father)
+            Information.push(body);
+            getBack.message = "Successfully Added";
+            getBack.success = true;
+            getBack.data = Information
 
-        res.end()
+            res.write(JSON.stringify ({status, getBack}))
+
+            res.end()
         }
-
-        //patch method
-        //put method
     })
-    // res.end()
 })
 
 server.listen(port, () => {
-    console.log("Server is up and running")
-}
+    console.log("Server is up and running");
+    
+})
+
